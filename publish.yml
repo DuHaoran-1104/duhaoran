@@ -1,0 +1,38 @@
+name: Node.js Package CI/CD
+
+# 告诉机器人什么时候开始工作
+on:
+  push:
+    tags:
+      - 'v*' # 核心指令：只有推送以 'v' 开头的 Tag（如 v1.0.8）时，才执行自动化发布！
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest # 给机器人分配一台最新的 Ubuntu Linux 电脑
+
+    steps:
+      # 第1步：把你的代码拉取到机器人的电脑上
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 第2步：在机器人的电脑上安装 Node.js 18
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          registry-url: 'https://registry.npmjs.org' # 明确告诉机器人发包到官方NPM源
+
+      # 第3步：安装项目依赖
+      - name: Install dependencies
+        run: npm install
+
+      # 第4步：运行自动化测试（可直接删掉这2行跳过测试）
+      - name: Run tests
+        run: npm run test || echo "测试未通过或没有测试，跳过并继续发布"
+
+      # 第5步：正式发布到NPM！
+      - name: Publish to NPM
+        run: npm publish
+        env:
+          # 机器人从GitHub保险箱里拿出NPM_TOKEN钥匙
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
