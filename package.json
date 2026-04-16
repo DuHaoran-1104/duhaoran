@@ -1,0 +1,30 @@
+{
+  "name": "root",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "packages/utils/*",
+    "packages/commands/*",
+    "packages/models/*"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "lerna": "^8.2.4"
+  },
+  "bin": {
+    "mycli": "index.js"
+  },
+  "scripts": {
+    "lint": "eslint . --ext .js",
+    "format": "prettier --write \"**/*.{js,json,md}\""
+  },
+  "lint-staged": {
+    "**/*.js": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,md}": [
+      "prettier --write"
+    ]
+  }
+}
